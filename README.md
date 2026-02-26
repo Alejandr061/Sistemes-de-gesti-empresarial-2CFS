@@ -1,1 +1,1 @@
-# Sistemes-de-gesti-empresarial-2CFS
+# Sistemes-de-gestió-empresarial-2CFS
