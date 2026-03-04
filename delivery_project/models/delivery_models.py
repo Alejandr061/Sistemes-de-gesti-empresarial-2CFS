@@ -18,7 +18,7 @@ class DeliveryEmployee(models.Model):
         "delivery.trip",
         "employee_id",
         string="Repartiments",
-    )  # relacion trips employee
+    )  # relacion un empleado muchos repartos
 
 
 class DeliveryVehicle(models.Model):
@@ -42,7 +42,7 @@ class DeliveryVehicle(models.Model):
         "delivery.trip",
         "vehicle_id",
         string="Repartiments",
-    )  # relacion trips vehicle
+    )  # relacion un vehiculo muchos repartos
 
 
 class DeliveryClient(models.Model):
@@ -57,7 +57,7 @@ class DeliveryClient(models.Model):
         "delivery.trip",
         "sender_id",
         string="Repartiments emesos",
-    )  # relacion sender trips
+    )  # relacion un cliente muchos repartos
 
 
 class DeliveryTrip(models.Model):
@@ -77,17 +77,17 @@ class DeliveryTrip(models.Model):
         "delivery.employee",
         string="Repartidor",
         required=True,
-    )  # relacion employee trip
+    )  # relacion muchos repartos un empleado
     vehicle_id = fields.Many2one(
         "delivery.vehicle",
         string="Vehicle",
         required=True,
-    )  # relacion vehicle trip
+    )  # relacion muchos repartos un vehiculo
     sender_id = fields.Many2one(
         "delivery.client",
         string="Client emissor",
         required=True,
-    )  # relacion client trip
+    )  # relacion muchos repartos un cliente
 
     receiver_name = fields.Char(string="Nom receptor", required=True)
     receiver_phone = fields.Char(string="Telefon receptor")
@@ -233,4 +233,5 @@ class DeliveryTrip(models.Model):
             if trip.vehicle_id.vehicle_type == "van" and trip.distance_km < 1:
                 raise ValidationError(
                     _("Els repartiments de menys d'1 km no es poden fer en furgoneta.")
+
                 )
