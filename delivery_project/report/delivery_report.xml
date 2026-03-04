@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_report_repartos_pendientes" model="ir.actions.report">
+        <field name="name">Repartiments pendents</field>
+        <field name="model">delivery.employee</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">delivery_project.report_reparto_pendientes_template</field>
+        <field name="binding_model_id" ref="model_delivery_employee"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_reparto_pendientes_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="emp">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Repartiments pendents per empleat</h2>
+                        <p><strong>Empleat:</strong> <span t-field="emp.name"/> <span t-field="emp.surname"/></p>
+                        <hr/>
+                        <t t-set="pending_trips" t-value="emp.trip_ids.filtered(lambda t: t.state == 'pending')"/>
+                        <t t-if="pending_trips">
+                            <h3>Llista de repartiments pendents d'eixida</h3>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Codi</th>
+                                        <th>Data recepcio</th>
+                                        <th>Vehicle</th>
+                                        <th>Urgencia</th>
+                                        <th>Kilometres</th>
+                                        <th>Client emissor</th>
+                                        <th>Receptor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="pending_trips" t-as="trip">
+                                        <tr>
+                                            <td><span t-field="trip.name"/></td>
+                                            <td><span t-field="trip.reception_datetime"/></td>
+                                            <td><span t-field="trip.vehicle_id.name"/></td>
+                                            <td><span t-field="trip.urgency"/></td>
+                                            <td><span t-field="trip.distance_km"/> km</td>
+                                            <td><span t-field="trip.sender_id.name"/></td>
+                                            <td><span t-field="trip.receiver_name"/> - <span t-field="trip.receiver_address"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </t>
+                        <t t-else="">
+                            <p>No hi ha repartiments pendents.</p>
+                        </t>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_delivery_employee,access_delivery_employee,model_delivery_employee,base.group_user,1,1,1,1
+access_delivery_vehicle,access_delivery_vehicle,model_delivery_vehicle,base.group_user,1,1,1,1
+access_delivery_client,access_delivery_client,model_delivery_client,base.group_user,1,1,1,1
+access_delivery_trip,access_delivery_trip,model_delivery_trip,base.group_user,1,1,1,1
+access_delivery_trip_wizard,access_delivery_trip_wizard,model_delivery_trip_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,380 @@
+<!-- delivery_project/views/delivery_views.xml -->
+<odoo>
+
+    <!-- secuencia codi repartiment -->
+    <record id="seq_delivery_trip_code" model="ir.sequence">
+        <field name="name">Codi repartiment</field>
+        <field name="code">delivery.trip.code</field>
+        <field name="prefix">REP</field>
+        <field name="padding">5</field>
+    </record>
+
+    <!-- menu arrel -->
+    <menuitem id="menu_delivery_root" name="Repartidors"/>
+
+    <!-- EMPLEATS -->
+
+    <record id="view_delivery_employee_tree" model="ir.ui.view">
+        <field name="name">delivery.employee.tree</field>
+        <field name="model">delivery.employee</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="surname"/>
+                <field name="dni"/>
+                <field name="phone"/>
+                <field name="has_moped_license"/>
+                <field name="has_van_license"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_delivery_employee_form" model="ir.ui.view">
+        <field name="name">delivery.employee.form</field>
+        <field name="model">delivery.employee</field>
+        <field name="arch" type="xml">
+            <form string="Empleat">
+                <sheet>
+                    <group>
+                        <field name="photo" widget="image"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="surname"/>
+                            <field name="dni"/>
+                            <field name="phone"/>
+                            <field name="has_moped_license"/>
+                            <field name="has_van_license"/>
+                        </group>
+                    </group>
+                    <group string="Repartiments">
+                        <field name="trip_ids">
+                            <!-- subvista editable amb colors i totals -->
+                            <tree editable="bottom"
+                                  decoration-info="state == 'pending'"
+                                  decoration-warning="state == 'ongoing'"
+                                  decoration-success="state == 'done'">
+                                <field name="name"/>
+                                <field name="reception_datetime"/>
+                                <field name="distance_km" sum="Total km"/>
+                                <field name="weight_kg" sum="Total kg"/>
+                                <field name="state"/>
+                                <field name="urgency"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_delivery_employee" model="ir.actions.act_window">
+        <field name="name">Empleats</field>
+        <field name="res_model">delivery.employee</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_delivery_employee"
+              name="Empleats"
+              parent="menu_delivery_root"
+              action="action_delivery_employee"/>
+
+    <!-- VEHICLES -->
+
+    <record id="view_delivery_vehicle_tree" model="ir.ui.view">
+        <field name="name">delivery.vehicle.tree</field>
+        <field name="model">delivery.vehicle</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="vehicle_type"/>
+                <field name="plate"/>
+                <field name="description"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_delivery_vehicle_form" model="ir.ui.view">
+        <field name="name">delivery.vehicle.form</field>
+        <field name="model">delivery.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle">
+                <sheet>
+                    <group>
+                        <field name="photo" widget="image"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="vehicle_type"/>
+                            <field name="plate"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <group string="Repartiments">
+                        <field name="trip_ids">
+                            <tree decoration-info="state == 'pending'"
+                                  decoration-warning="state == 'ongoing'"
+                                  decoration-success="state == 'done'">
+                                <field name="name"/>
+                                <field name="reception_datetime"/>
+                                <field name="distance_km"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_delivery_vehicle" model="ir.actions.act_window">
+        <field name="name">Vehicles</field>
+        <field name="res_model">delivery.vehicle</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_delivery_vehicle"
+              name="Vehicles"
+              parent="menu_delivery_root"
+              action="action_delivery_vehicle"/>
+
+    <!-- CLIENTS -->
+
+    <record id="view_delivery_client_tree" model="ir.ui.view">
+        <field name="name">delivery.client.tree</field>
+        <field name="model">delivery.client</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="surname"/>
+                <field name="dni"/>
+                <field name="phone"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_delivery_client_form" model="ir.ui.view">
+        <field name="name">delivery.client.form</field>
+        <field name="model">delivery.client</field>
+        <field name="arch" type="xml">
+            <form string="Client">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="surname"/>
+                        <field name="dni"/>
+                        <field name="phone"/>
+                    </group>
+                    <group string="Repartiments emesos">
+                        <field name="trip_sender_ids">
+                            <tree>
+                                <field name="name"/>
+                                <field name="reception_datetime"/>
+                                <field name="state"/>
+                                <field name="urgency"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_delivery_client" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">delivery.client</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_delivery_client"
+              name="Clients"
+              parent="menu_delivery_root"
+              action="action_delivery_client"/>
+
+    <!-- REPARTIMENTS: TREE + FORM + CALENDAR + SEARCH -->
+
+    <record id="view_delivery_trip_tree" model="ir.ui.view">
+        <field name="name">delivery.trip.tree</field>
+        <field name="model">delivery.trip</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'pending'"
+                  decoration-warning="state == 'ongoing'"
+                  decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="reception_datetime"/>
+                <field name="employee_id"/>
+                <field name="vehicle_id"/>
+                <field name="distance_km" sum="Total km"/>
+                <field name="weight_kg" sum="Total kg"/>
+                <field name="state"/>
+                <field name="urgency"/>
+                <field name="urgency_priority" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_delivery_trip_form" model="ir.ui.view">
+        <field name="name">delivery.trip.form</field>
+        <field name="model">delivery.trip</field>
+        <field name="arch" type="xml">
+            <form string="Repartiment">
+                <header>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,ongoing,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="1"/>
+                        <field name="reception_datetime"/>
+                        <field name="urgency"/>
+                    </group>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="vehicle_id"/>
+                        <field name="distance_km"/>
+                        <field name="weight_kg"/>
+                        <field name="volume_m3"/>
+                        <field name="duration_hours" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Emissor">
+                            <group>
+                                <field name="sender_id"/>
+                            </group>
+                        </page>
+                        <page string="Receptor">
+                            <group>
+                                <field name="receiver_name"/>
+                                <field name="receiver_phone"/>
+                                <field name="receiver_address"/>
+                            </group>
+                        </page>
+                        <page string="Temps">
+                            <group>
+                                <field name="start_datetime"/>
+                                <field name="end_datetime"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_delivery_trip_calendar" model="ir.ui.view">
+        <field name="name">delivery.trip.calendar</field>
+        <field name="model">delivery.trip</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendar repartiments"
+                      date_start="start_datetime"
+                      date_stop="end_datetime"
+                      color="employee_id">
+                <field name="name"/>
+                <field name="employee_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_delivery_trip_search" model="ir.ui.view">
+        <field name="name">delivery.trip.search</field>
+        <field name="model">delivery.trip</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="vehicle_id"/>
+                <field name="state"/>
+                <field name="urgency"/>
+                <filter name="pending"
+                        string="Pendents"
+                        domain="[('state','=','pending')]"/>
+                <filter name="ongoing"
+                        string="En cami"
+                        domain="[('state','=','ongoing')]"/>
+                <filter name="done"
+                        string="Entregats"
+                        domain="[('state','=','done')]"/>
+                <filter name="group_by_employee"
+                        string="Per empleat"
+                        context="{'group_by':'employee_id'}"/>
+                <filter name="group_by_day"
+                        string="Per dia"
+                        context="{'group_by':'reception_datetime:day'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_delivery_trip" model="ir.actions.act_window">
+        <field name="name">Repartiments</field>
+        <field name="res_model">delivery.trip</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="search_view_id" ref="view_delivery_trip_search"/>
+    </record>
+
+    <menuitem id="menu_delivery_trip"
+              name="Repartiments"
+              parent="menu_delivery_root"
+              action="action_delivery_trip"/>
+
+    <!-- WIZARD: VISTA + ACCIÓ + BOTÓ EN TREE -->
+
+    <!-- vista del wizard -->
+    <record id="view_delivery_trip_wizard_form" model="ir.ui.view">
+        <field name="name">delivery.trip.wizard.form</field>
+        <field name="model">delivery.trip.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Crear repartiment">
+                <sheet>
+                    <group>
+                        <field name="employee_id"/>
+                        <field name="vehicle_id"/>
+                        <field name="sender_id"/>
+                    </group>
+                    <group string="Receptor">
+                        <field name="receiver_name"/>
+                        <field name="receiver_phone"/>
+                        <field name="receiver_address"/>
+                    </group>
+                    <group string="Detalls">
+                        <field name="distance_km"/>
+                        <field name="weight_kg"/>
+                        <field name="volume_m3"/>
+                        <field name="urgency"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Crear"
+                            type="object"
+                            name="action_create_trip"
+                            class="btn-primary"/>
+                    <button string="Cancel·lar"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- acció que obri el wizard -->
+    <record id="action_delivery_trip_wizard" model="ir.actions.act_window">
+        <field name="name">Wizard repartiment</field>
+        <field name="res_model">delivery.trip.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_delivery_trip_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+
+    <!-- botó en la llista de repartiments per obrir el wizard -->
+    <record id="view_delivery_trip_tree_inherit_wizard" model="ir.ui.view">
+        <field name="name">delivery.trip.tree.wizard.button</field>
+        <field name="model">delivery.trip</field>
+        <field name="inherit_id" ref="view_delivery_trip_tree"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <button name="%(action_delivery_trip_wizard)d"
+                        type="action"
+                        string="Nou repartiment simple"
+                        class="btn-secondary"/>
+            </tree>
+        </field>
+    </record>
+
+</odoo>
